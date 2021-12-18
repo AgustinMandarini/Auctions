@@ -11,6 +11,7 @@ from .forms import NewListing
 
 def index(request):
     listings = Listing.objects.all()
+
     return render(request, "auctions/index.html", {
         "listings": listings
         })
@@ -70,13 +71,17 @@ def register(request):
 @login_required
 def new_listing(request):
     if request.method == "POST":
-        form = NewListing(request.POST)
+        # request.POST handles regular form data while request.FILES handles images
+        form = NewListing(request.POST, request.FILES)
+        # Checks if data submited is valid and if user has signed in
         if form.is_valid() and request.user.is_authenticated:
             title = form.cleaned_data["title"]
             descr = form.cleaned_data["descr"]
             starting_bid = form.cleaned_data["starting_bid"]
+            image = request.FILES['image']
             seller = request.user
-            listing = Listing(title=title, descr=descr, starting_bid=starting_bid, seller=seller)
+
+            listing = Listing(title=title, descr=descr, starting_bid=starting_bid, image=image, seller=seller)
             listing.save()
             return HttpResponseRedirect(reverse("index"))
         else:

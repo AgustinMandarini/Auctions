@@ -12,6 +12,8 @@ class Listing(models.Model):
 	creation_date = models.DateField(auto_now_add=True)
 	close_date = models.DateField(auto_now=True)
 	status = models.BooleanField(default=True)
+	image = models.ImageField(null=True, blank=True, upload_to='listing_images', default='default.jpg')
+
 	seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="u_listings")
 
 	def __str__(self):
