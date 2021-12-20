@@ -5,15 +5,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing
-from .forms import NewListing
+from .models import User, Listing, Bid, Comments
+from .forms import NewListing, NewBid
 
 
 def index(request):
     listings = Listing.objects.all()
 
     return render(request, "auctions/index.html", {
-        "listings": listings
+        "listings": listings,
         })
 
 
@@ -72,23 +72,39 @@ def register(request):
 def new_listing(request):
     if request.method == "POST":
         # request.POST handles regular form data while request.FILES handles images
-        form = NewListing(request.POST, request.FILES)
+        listing_form = NewListing(request.POST, request.FILES)
+        bid_form = NewBid(request.POST)
         # Checks if data submited is valid and if user has signed in
-        if form.is_valid() and request.user.is_authenticated:
-            title = form.cleaned_data["title"]
-            descr = form.cleaned_data["descr"]
-            starting_bid = form.cleaned_data["starting_bid"]
-            image = request.FILES['image']
-            seller = request.user
+        if listing_form.is_valid() and bid_form.is_valid() and request.user.is_authenticated:
 
-            listing = Listing(title=title, descr=descr, starting_bid=starting_bid, image=image, seller=seller)
-            listing.save()
+            # Creates a new listing from posted listing form
+            title = listing_form.cleaned_data["title"]
+            descr = listing_form.cleaned_data["descr"]
+            image = request.FILES['image']
+
+            # Starting listing bid value is obtained from NewBid form
+            # and is assigned to current_bid value, which is the same value
+            # of new_bid
+            value = bid_form.cleaned_data['value']
+            creator = User.objects.get(pk=request.user.id)
+
+            new_listing = Listing(title=title, descr=descr, image=image, creator=creator, current_bid=value)
+            new_listing.save()
+
+            # Creates a new bid for the new listing, assigning the recently created listing's id
+            l = Listing.objects.get(pk=new_listing.id)
+
+            new_bid = Bid(bidder=creator, value=value, listing=l)
+            new_bid.save()
+
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/new_listing.html", {
-                "form": form
+                "listing_form": listing_form, 
+                "bid_form": bid_form
                 })
     else:
         return render(request, "auctions/new_listing.html", {
-            "form": NewListing()
+            "listing_form": NewListing(),
+            "bid_form": NewBid()
             })

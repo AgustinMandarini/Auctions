@@ -8,17 +8,16 @@
 	    		<img src='{{ listing.image.url }}'>
 				<div class="d-flex w-100 justify-content-between">
 			      	<h5 class="mb-1">{{ listing.title }}</h5>
-		      		<small>Created {{ listing.creation_date }}</small>
+		      		<small>Created {{ listing.created }}</small>
 			    </div>
-			    <h6 class="mb-1">Price: U$S {{ listing.starting_bid }}</h6>
+			    <h6 class="mb-1">Price: U$S {{ listing.current_bid }}</h6>
 			    <p class="mb-1">{{ listing.descr }}</p>
 			    <small>
-			    	{% if listing.l_comments == 'auctions.Comments.None' %}
+			    	{% if listing.comments.count == 0 %}
 			    		No Comments
 			    	{% else %}
-			    		Puta virgen
+			    		{{ listing.comments.count }} Comments
 			    	{% endif %}
-			    	
 				</small>
 			</a>
 		{% endfor %}
