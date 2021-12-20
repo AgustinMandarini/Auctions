@@ -80,6 +80,7 @@ def new_listing(request):
             # Creates a new listing from posted listing form
             title = listing_form.cleaned_data["title"]
             descr = listing_form.cleaned_data["descr"]
+            category = listing_form.cleaned_data["category"]
             image = request.FILES['image']
 
             # Starting listing bid value is obtained from NewBid form
@@ -88,7 +89,7 @@ def new_listing(request):
             value = bid_form.cleaned_data['value']
             creator = User.objects.get(pk=request.user.id)
 
-            new_listing = Listing(title=title, descr=descr, image=image, creator=creator, current_bid=value)
+            new_listing = Listing(title=title, descr=descr, category=category, image=image, creator=creator, current_bid=value)
             new_listing.save()
 
             # Creates a new bid for the new listing, assigning the recently created listing's id

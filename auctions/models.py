@@ -1,6 +1,18 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+CATEGORY_CHOICES = [
+	('A', 'Art'),
+	('B', 'Books'),
+    ('C', 'Clothing'),
+    ('E', 'Electronics'),
+    ('F', 'Furniture'),
+    ('G', 'Gaming'),
+    ('H', 'Home'),
+    ('M', 'Miscellaneous'),
+    ('OC', 'Outdoor/Camping'),
+    ('T', 'Toys')
+]
 
 class User(AbstractUser):
 	pass
@@ -8,12 +20,13 @@ class User(AbstractUser):
 class Listing(models.Model):
 	creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
 	title = models.CharField(max_length=80)
+	category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
 	descr = models.TextField()
 	current_bid = models.DecimalField(max_digits=7, decimal_places=2)
 	created = models.DateField(auto_now_add=True)
 	closed = models.DateField(auto_now=True)
 	status = models.BooleanField(default=True)
-	image = models.ImageField(null=True, default='default.jpg', )
+	image = models.ImageField(null=True, default='default.jpg', upload_to='media/images')
 
 	def __str__(self):
 		return f"{self.title} {self.descr} {self.current_bid} {self.created} {self.closed} {self.status}"
