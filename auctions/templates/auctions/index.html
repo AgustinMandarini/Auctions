@@ -2,26 +2,34 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    <div class="list-group">
+    <div class="contanier">
     	{% for listing in listings %}
-	    	<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-	    		<div class="thumbnail">
-	    			<img src='{{ listing.image.url }}'>
+	    	<div class="row">
+	    		<div class="col-sm-3">
+	    			<div class="thumbnail">
+						<img src='{{ listing.image.url }}'>
+					</div>
 	    		</div>
-				<div class="d-flex w-100 justify-content-between">
-			      	<h5 class="mb-1">{{ listing.title }}</h5>
-		      		<small>Created {{ listing.created }}</small>
-			    </div>
-			    <h6 class="mb-1">Price: U$S {{ listing.current_bid }}</h6>
-			    <p class="mb-1">{{ listing.descr }}</p>
-			    <small>
-			    	{% if listing.comments.count == 0 %}
-			    		No Comments
-			    	{% else %}
-			    		{{ listing.comments.count }} Comments
-			    	{% endif %}
-				</small>
-			</a>
+	    		<div class="col-sm-9">
+	    			<div class="list-group">
+				    	<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+							<div class="d-flex w-100 justify-content-between">
+						      	<h5 class="mb-1">{{ listing.title }}</h5>
+					      		<small>Created {{ listing.created }}</small>
+						    </div>
+						    <h6 class="mb-1">Price: U$S {{ listing.current_bid }}</h6>
+						    <p class="mb-1">{{ listing.descr }}</p>
+						    <small>
+						    	{% if listing.comments.count == 0 %}
+						    		No Comments
+						    	{% else %}
+						    		{{ listing.comments.count }} Comments
+						    	{% endif %}
+							</small>
+						</a>
+					</div>
+				</div>
+			</div>
 		{% endfor %}
     </div>
 {% endblock %}
